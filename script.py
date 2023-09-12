@@ -9,7 +9,6 @@ Prereqs:
 import subprocess
 
 REPO_NAME = "example-repo"
-WORKER_NAME = "example-worker"
 GITHUB_ACCT = "testname"
 
 commands = [f"wget https://github.com/{GITHUB_ACCT}/{REPO_NAME}/archive/main.zip",
@@ -32,10 +31,10 @@ for command in commands:
         # if wrangler d1 create dev is run, append the output to wrangler.toml
         # only need last 5 lines of output
         if command == f"wrangler d1 create {REPO_NAME}-db":
+            if not os.path.exists(f"{REPO_NAME}-main/wrangler.toml"):
+                os.mknod(f"{REPO_NAME}-main/wrangler.toml")
             with open(f"{REPO_NAME}/wrangler.toml", "a") as f:
                 # write new line to separate configs in toml file
-                f.write(
-                    f"name = \"{WORKER_NAME}\"\nmain = \"index.js\"\ncompatibility_date = \"2023-09-04\"")
                 f.write("\n")
                 for line in output.split("\n")[-5:]:
                     f.write(line + "\n")
