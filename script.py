@@ -9,7 +9,7 @@ Prereqs:
 import subprocess
 
 REPO_NAME = "example-repo"
-GITHUB_ACCT = "testname"
+GITHUB_ACCT = "example-username"
 
 commands = [f"wget https://github.com/{GITHUB_ACCT}/{REPO_NAME}/archive/main.zip",
             "unzip main.zip",
@@ -31,14 +31,16 @@ for command in commands:
         # if wrangler d1 create dev is run, append the output to wrangler.toml
         # only need last 5 lines of output
         if command == f"wrangler d1 create {REPO_NAME}-db":
-            if not os.path.exists(f"{REPO_NAME}-main/wrangler.toml"):
-                os.mknod(f"{REPO_NAME}-main/wrangler.toml")
-            with open(f"{REPO_NAME}/wrangler.toml", "a") as f:
-                # write new line to separate configs in toml file
-                f.write("\n")
+            with open(f"{REPO_NAME}-main/wrangler.toml", "a") as f:
+                # write new line to separate configs in toml file for spacing
+                f.write("\n" * 2)
                 for line in output.split("\n")[-5:]:
                     f.write(line + "\n")
+        elif command == f"cd {REPO_NAME}-main && wrangler deploy":
+            print(output)
     except subprocess.CalledProcessError as e:
         # Handle any errors that occur
         print(f"Error running command: {command}")
         print(f"Error message: {e.output}")
+
+print("Deployed to Cloudflare! ✅")
